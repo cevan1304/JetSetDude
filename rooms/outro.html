@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090b10">
+  <title>Jet Set Dude — Outro</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #0b0d12;
+      --paper: #fffdf4;
+      --orange: #ff5a24;
+      --gold: #ffc928;
+      --purple: #8b4ed8;
+      --blue: #46a9dc;
+      --panel: rgba(9, 11, 16, 0.9);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #090b10;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overscroll-behavior: none;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow: hidden;
+    }
+
+    button { font: inherit; }
+
+    .app {
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      background:
+        radial-gradient(circle at 50% 25%, rgba(255, 89, 36, 0.13), transparent 40%),
+        #090b10;
+    }
+
+    .hud,
+    .controls {
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: max(10px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) 10px max(14px, env(safe-area-inset-left));
+      background: var(--panel);
+      border-color: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(14px);
+    }
+
+    .hud { border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
+
+    .brand {
+      flex: 0 0 auto;
+      font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      font-size: clamp(16px, 2vw, 25px);
+      letter-spacing: 0.055em;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    .brand span { color: var(--orange); }
+
+    .scene-name {
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: clamp(11px, 1.2vw, 14px);
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .counter {
+      flex: 0 0 auto;
+      color: #fff;
+      font-size: clamp(11px, 1.2vw, 14px);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.04em;
+    }
+
+    .stage-shell {
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      padding: 10px;
+    }
+
+    .stage {
+      position: relative;
+      width: min(100%, calc((100vh - 142px) * 1.776833));
+      width: min(100%, calc((100dvh - 142px) * 1.776833));
+      max-height: 100%;
+      aspect-ratio: 1672 / 941;
+      overflow: hidden;
+      isolation: isolate;
+      container-type: inline-size;
+      background: #141821;
+      border: 1px solid rgba(255, 255, 255, 0.17);
+      border-radius: clamp(6px, 1vw, 14px);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.58);
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .scene-image {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      opacity: 1;
+      transform: scale(1.001);
+      transition: opacity 260ms ease, transform 600ms ease;
+    }
+
+    .stage.scene-changing .scene-image {
+      opacity: 0.12;
+      transform: scale(1.012);
+    }
+
+    .vignette {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.18), transparent 24%, transparent 72%, rgba(0, 0, 0, 0.17)),
+        radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.22) 100%);
+    }
+
+    .bubble-host {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .bubble {
+      --x: 50%;
+      --y: 8%;
+      --w: 34%;
+      position: absolute;
+      z-index: 1;
+      left: var(--x);
+      top: var(--y);
+      width: var(--w);
+      min-width: 18%;
+      margin: 0;
+      padding: clamp(8px, 1.05cqw, 18px) clamp(10px, 1.25cqw, 22px);
+      color: var(--ink);
+      background: var(--paper);
+      border: clamp(2px, 0.24cqw, 4px) solid var(--ink);
+      border-radius: clamp(12px, 1.7cqw, 28px);
+      box-shadow: clamp(3px, 0.45cqw, 8px) clamp(4px, 0.58cqw, 10px) 0 rgba(7, 9, 12, 0.78);
+      font-size: clamp(11px, 1.36cqw, 23px);
+      font-weight: 800;
+      line-height: 1.16;
+      letter-spacing: -0.018em;
+      animation: bubble-in 180ms ease both;
+    }
+
+    .bubble p { margin: 0; }
+
+    .bubble-tail {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+      filter: none;
+      animation: bubble-in 180ms ease both;
+    }
+
+    .sfx {
+      left: 50%;
+      top: 44%;
+      width: auto;
+      min-width: 0;
+      padding: clamp(14px, 2.4cqw, 40px) clamp(20px, 3.1cqw, 52px);
+      transform: translate(-50%, -50%) rotate(-4deg);
+      color: #c20e18;
+      background: #ffe238;
+      border: 0;
+      border-radius: 0;
+      clip-path: polygon(50% 0%, 59% 22%, 78% 7%, 79% 30%, 100% 26%, 85% 48%, 100% 61%, 77% 66%, 81% 91%, 59% 77%, 50% 100%, 41% 77%, 19% 92%, 23% 67%, 0 61%, 15% 48%, 0 27%, 22% 30%, 22% 7%, 41% 22%);
+      filter: drop-shadow(clamp(3px, 0.42cqw, 7px) clamp(4px, 0.52cqw, 9px) 0 #111);
+      font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      font-size: clamp(24px, 5.2cqw, 88px);
+      font-weight: 500;
+      letter-spacing: 0.035em;
+      line-height: 1;
+      text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff;
+      white-space: nowrap;
+      animation: sfx-in 380ms cubic-bezier(.18, .85, .16, 1.25) both;
+    }
+
+    .sfx::before,
+    .sfx::after { display: none; }
+
+    .title-card {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      display: grid;
+      place-content: center;
+      justify-items: center;
+      padding: 7%;
+      color: #fff;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(circle, rgba(14, 16, 22, 0.58) 0%, rgba(7, 8, 12, 0.84) 72%);
+      transition: opacity 350ms ease;
+    }
+
+    .title-card.visible { opacity: 1; }
+
+    .final-title {
+      margin: 0;
+      color: #fff;
+      font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      font-size: clamp(34px, 7.3cqw, 122px);
+      font-weight: 500;
+      letter-spacing: 0.045em;
+      line-height: 0.92;
+      text-shadow: 0.045em 0.055em 0 #111, 0 0 0.3em rgba(255, 90, 36, 0.35);
+      transform: rotate(-1deg);
+    }
+
+    .final-subtitle {
+      min-height: 1.3em;
+      margin: clamp(8px, 1.3cqw, 22px) 0 0;
+      color: var(--gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(16px, 2.25cqw, 38px);
+      font-style: italic;
+      font-weight: 800;
+      opacity: 0;
+      transform: translateY(0.5em);
+      transition: opacity 320ms ease, transform 320ms ease;
+    }
+
+    .title-card.has-subtitle .final-subtitle {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .image-error {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: none;
+      place-content: center;
+      padding: 8%;
+      color: #fff;
+      background: #171a22;
+      text-align: center;
+    }
+
+    .image-error.visible { display: grid; }
+    .image-error strong { color: #ff7c57; }
+
+    .tap-hint {
+      position: absolute;
+      right: 1.2%;
+      bottom: 1.6%;
+      z-index: 7;
+      padding: 0.38em 0.7em;
+      color: rgba(255, 255, 255, 0.88);
+      background: rgba(5, 6, 9, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      font-size: clamp(8px, 0.75cqw, 13px);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    .controls {
+      justify-content: center;
+      padding: 10px max(14px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .control-button {
+      min-width: clamp(76px, 10vw, 132px);
+      min-height: 42px;
+      padding: 9px 14px;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 9px;
+      font-size: clamp(11px, 1.1vw, 14px);
+      font-weight: 850;
+      letter-spacing: 0.065em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    .control-button:hover:not(:disabled) {
+      border-color: rgba(255, 255, 255, 0.54);
+      background: rgba(255, 255, 255, 0.14);
+      transform: translateY(-1px);
+    }
+
+    .control-button:active:not(:disabled) { transform: translateY(1px); }
+    .control-button:focus-visible { outline: 3px solid #69c9ff; outline-offset: 2px; }
+    .control-button:disabled { opacity: 0.36; cursor: default; }
+    .control-button.primary { color: #111; background: var(--gold); border-color: #ffe878; }
+    .control-button.auto-on { color: #111; background: #77dc8f; border-color: #a3f2b4; }
+
+    .progress-cluster {
+      width: min(28vw, 360px);
+      min-width: 130px;
+      display: grid;
+      gap: 5px;
+    }
+
+    .progress-track {
+      height: 6px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--orange), var(--gold));
+      border-radius: inherit;
+      transition: width 220ms ease;
+    }
+
+    .progress-text {
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+
+    @keyframes bubble-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes sfx-in {
+      from { opacity: 0; transform: translate(-50%, -50%) rotate(-9deg) scale(0.3); }
+      70% { opacity: 1; transform: translate(-50%, -50%) rotate(-2deg) scale(1.12); }
+      to { opacity: 1; transform: translate(-50%, -50%) rotate(-4deg) scale(1); }
+    }
+
+    @media (max-width: 760px) {
+      .hud { padding-block: 7px; }
+      .scene-name { display: none; }
+      .stage-shell { padding: 5px; }
+      .controls { gap: 6px; padding-block: 7px max(7px, env(safe-area-inset-bottom)); }
+      .control-button { min-width: 0; min-height: 38px; padding: 7px 9px; }
+      .progress-cluster { min-width: 92px; width: 20vw; }
+      .fullscreen-button { display: none; }
+      .tap-hint { display: none; }
+    }
+
+    @media (max-height: 520px) {
+      .app { grid-template-rows: 34px minmax(0, 1fr) 46px; }
+      .hud { padding-block: 4px; }
+      .stage-shell { padding: 3px; }
+      .controls { padding-block: 4px; }
+      .control-button { min-height: 34px; padding-block: 5px; }
+      .progress-text { display: none; }
+      .stage { width: min(100%, calc((100dvh - 86px) * 1.776833)); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 1ms !important;
+      }
+    }
+
+    :fullscreen .app,
+    :-webkit-full-screen .app { background: #000; }
+  </style>
+<style>
+html,body{width:100%;height:100%;background:#000}
+.hud,.controls,.tap-hint{display:none!important}
+.app{position:fixed;inset:0;width:100%;height:100%;display:block;background:#000}
+.stage-shell{width:100%;height:100%;padding:0;display:grid;place-items:center}
+.stage{width:min(100vw,calc(100dvh * 1672 / 941));max-height:100dvh;aspect-ratio:1672/941;border:0;border-radius:0;box-shadow:none;cursor:default}
+#theEnd{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));z-index:30;padding:12px 22px;border:2px solid #e7c473;border-radius:8px;background:rgba(10,12,13,.88);color:#ffe6a7;font:bold clamp(15px,1.3vw,21px) Georgia,serif;letter-spacing:.08em;cursor:pointer;box-shadow:0 3px 12px #0008}
+#theEnd:hover,#theEnd:focus-visible{background:#4c3820;outline:2px solid #fff0ce;outline-offset:3px}
+</style></head>
+<body>
+  <main class="app" id="app">
+    <header class="hud">
+      <div class="brand">Jet Set <span>Dude</span></div>
+      <div class="scene-name" id="sceneName">Outro</div>
+      <div class="counter" id="counter">Scene 1/6 · Line 1/2</div>
+    </header>
+
+    <section class="stage-shell" aria-label="Comic outro">
+      <div class="stage" id="stage" aria-label="Outro scene">
+        <img class="scene-image" id="sceneImage" alt="" draggable="false">
+        <div class="vignette" aria-hidden="true"></div>
+        <div class="bubble-host" id="bubbleHost"></div>
+
+        <div class="title-card" id="titleCard" aria-hidden="true">
+          <h1 class="final-title" id="finalTitle">THE DUDE MADE IT.</h1>
+          <p class="final-subtitle" id="finalSubtitle">More or less.</p>
+        </div>
+
+        <div class="image-error" id="imageError" role="alert">
+          <p><strong>Image could not be loaded.</strong><br><span id="errorFile"></span></p>
+        </div>
+
+        <div class="tap-hint" id="tapHint">Click / tap to continue</div>
+      </div>
+    </section>
+
+    <footer class="controls" data-control>
+      <button class="control-button" id="backButton" type="button" data-control>← Back</button>
+      <button class="control-button" id="autoButton" type="button" aria-pressed="false" data-control>Auto: off</button>
+
+      <div class="progress-cluster" aria-hidden="true">
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-text" id="progressText">1 of 32</div>
+      </div>
+
+      <button class="control-button primary" id="nextButton" type="button" data-control>Next →</button>
+      <button class="control-button fullscreen-button" id="fullscreenButton" type="button" data-control>Fullscreen</button>
+    </footer>
+  <button id="theEnd" type="button" aria-label="Skip to the final outro screen">THE END</button></main>
+
+  <div class="sr-only" id="announcer" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const pos = (x, y, w, mouthX, mouthY) => ({
+        x,
+        y,
+        w,
+        mouth: { x: mouthX, y: mouthY }
+      });
+
+      const scenes = [
+        {
+          id: "arrival",
+          title: "Arrival at the bowling alley",
+          image: "pack://32b05bff940f52906a06",
+          alt: "Dude arrives outside his favourite neon-lit bowling alley at night.",
+          steps: [
+            { speaker: "Dude", text: "Finally. A place where the furniture doesn’t try to kill me.", duration: 4000, pos: pos(33, 13, 34, 29.5, 22.2) },
+            { speaker: "Dude", text: "Man, I really need a lane... and a refill.", duration: 3500, pos: pos(33, 14, 32, 29.5, 22.2) }
+          ]
+        },
+        {
+          id: "friends",
+          title: "Back with Donny and Walter",
+          image: "pack://71b20b25cc7dd1d1c1bd",
+          alt: "Donny, Walter and Dude sit together beside the bowling lanes.",
+          steps: [
+            { speaker: "Donny", text: "Hey, Dude. We thought you got lost.", pos: pos(3, 69, 30, 27.4, 31.7) },
+            { speaker: "Dude", text: "I did. In a house designed by a lunatic.", pos: pos(64, 68, 33, 75.7, 25.5) },
+            { speaker: "Walter", text: "You’re late. We had to start without you.", pos: pos(34, 69, 32, 48.4, 27.4) },
+            { speaker: "Dude", text: "There were snakes, flying records, falling books... and an axe.", duration: 4500, pos: pos(62, 64, 35, 75.7, 25.5) },
+            { speaker: "Donny", text: "Were the snakes good at bowling?", pos: pos(3, 69, 30, 27.4, 31.7) },
+            { speaker: "Walter", text: "Donny, snakes don’t have regulation footwear.", duration: 4000, pos: pos(33, 66, 35, 48.4, 27.4) }
+          ]
+        },
+        {
+          id: "challenge",
+          title: "Jesus arrives",
+          image: "pack://a4c1103c87573820f428",
+          alt: "Jesus challenges Dude, Donny and Walter at the bowling lanes.",
+          steps: [
+            { speaker: "Jesus", text: "Look who finally showed up.", pos: pos(3, 68, 32, 23.6, 15.9) },
+            { speaker: "Jesus", text: "You ready to lose, amigos?", pos: pos(3, 69, 31, 23.6, 15.9) },
+            { speaker: "Dude", text: "I just escaped a death house, man.", pos: pos(67, 69, 30, 80.5, 42.7) },
+            { speaker: "Walter", text: "Good. Losing to Jesus will feel relaxing.", duration: 4000, pos: pos(46, 66, 35, 67.8, 42.5) },
+            { speaker: "Jesus", text: "Watch carefully. This is perfection.", pos: pos(3, 68, 33, 23.6, 15.9) },
+            { speaker: "Donny", text: "Does perfection always wear purple?", pos: pos(32, 68, 31, 44.7, 43.6) },
+            { speaker: "Dude", text: "Helps people see it coming.", pos: pos(67, 69, 30, 80.5, 42.7) }
+          ]
+        },
+        {
+          id: "one-pin",
+          title: "One pin left",
+          image: "pack://c166b976f7fd6406d9b0",
+          alt: "Jesus stares back in disbelief at one bowling pin left standing while the others smile.",
+          steps: [
+            { speaker: "Jesus", text: "That pin moved!", pos: pos(51, 4, 39, 36.6, 16.5) },
+            { speaker: "Walter", text: "One pin, Jesus! Even the pin doesn’t respect you!", duration: 4500, pos: pos(51, 4, 39, 82.0, 48.5) },
+            { speaker: "Donny", text: "Do pins have feelings?", pos: pos(51, 4, 39, 65.2, 48.9) },
+            { speaker: "Walter", text: "Not now, Donny.", pos: pos(51, 4, 39, 82.0, 48.5) },
+            { speaker: "Dude", text: "Yeah. They do that sometimes.", pos: pos(51, 4, 39, 86.4, 49.1) }
+          ]
+        },
+        {
+          id: "strike",
+          title: "Dude’s strike",
+          image: "pack://fa0ff0848568063c817f",
+          alt: "Dude finishes a bowling throw as all ten pins explode into a strike and his friends celebrate.",
+          steps: [
+            { type: "sfx", text: "STRIKE!", duration: 1800 },
+            { speaker: "Donny", text: "That was beautiful, Dude.", pos: pos(35.5, 69, 29, 63.5, 22.5) },
+            { speaker: "Dude", text: "Sometimes the ball just knows where it belongs.", duration: 4200, pos: pos(32, 65, 36, 39.0, 13.5) },
+            { speaker: "Walter", text: "You taking notes over there?", pos: pos(34, 69, 32, 74.4, 29.2) },
+            { speaker: "Jesus", text: "Lucky shot.", pos: pos(39.5, 70, 21, 80.5, 12.4) },
+            { speaker: "Dude", text: "Sure, man.", pos: pos(38.5, 70, 23, 39.0, 13.5) }
+          ]
+        },
+        {
+          id: "finale",
+          title: "Final toast",
+          image: "pack://d6ba895bf2b7596c2276",
+          alt: "Donny, Walter, Dude and Jesus raise drinks together beside the bowling lanes.",
+          steps: [
+            { speaker: "Walter", text: "To bowling, friendship and surviving terrible architecture!", duration: 4500, pos: pos(27, 65, 40, 43.5, 35.1) },
+            { speaker: "Donny", text: "And snakes.", pos: pos(3, 70, 22, 21.3, 40.9) },
+            { speaker: "Jesus", text: "Next game is mine.", pos: pos(74, 70, 23, 90.5, 34.4) },
+            { speaker: "Dude", text: "Sure, man. Whatever helps you roll.", duration: 4000, pos: pos(50, 68, 32, 54.8, 35.5) },
+            { type: "title", text: "THE DUDE MADE IT.", duration: 2200 },
+            { type: "subtitle", text: "More or less.", duration: 3200 }
+          ]
+        }
+      ];
+
+      const DEFAULT_DURATION = 3500;
+      const timeline = scenes.flatMap((scene, sceneIndex) =>
+        scene.steps.map((step, stepIndex) => ({ scene, sceneIndex, step, stepIndex }))
+      );
+
+      const stage = document.getElementById("stage");
+      const image = document.getElementById("sceneImage");
+      const bubbleHost = document.getElementById("bubbleHost");
+      const titleCard = document.getElementById("titleCard");
+      const finalTitle = document.getElementById("finalTitle");
+      const finalSubtitle = document.getElementById("finalSubtitle");
+      const sceneName = document.getElementById("sceneName");
+      const counter = document.getElementById("counter");
+      const progressFill = document.getElementById("progressFill");
+      const progressText = document.getElementById("progressText");
+      const backButton = document.getElementById("backButton");
+      const nextButton = document.getElementById("nextButton");
+      const autoButton = document.getElementById("autoButton");
+      const fullscreenButton = document.getElementById("fullscreenButton");
+      const imageError = document.getElementById("imageError");
+      const errorFile = document.getElementById("errorFile");
+      const announcer = document.getElementById("announcer");
+
+      const query = new URLSearchParams(location.search);
+      let cursor = 0;
+      let lastSceneIndex = -1;
+      let autoPlay = true;
+      let autoTimer = 0;
+      let completionSent = false;
+      let activeTail = null;
+      let tailFrame = 0;
+
+      const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+      function layoutTail() {
+        if (!activeTail) return;
+
+        const { bubble, svg, path, mouth } = activeTail;
+        const stageWidth = stage.clientWidth;
+        const stageHeight = stage.clientHeight;
+        if (!stageWidth || !stageHeight) return;
+
+        svg.setAttribute("viewBox", `0 0 ${stageWidth} ${stageHeight}`);
+
+        const left = bubble.offsetLeft;
+        const top = bubble.offsetTop;
+        const right = left + bubble.offsetWidth;
+        const bottom = top + bubble.offsetHeight;
+        const target = {
+          x: stageWidth * mouth.x / 100,
+          y: stageHeight * mouth.y / 100
+        };
+
+        const guardX = Math.min(18, Math.max(7, bubble.offsetWidth / 4));
+        const guardY = Math.min(18, Math.max(7, bubble.offsetHeight / 4));
+        const candidates = [
+          { x: clamp(target.x, left + guardX, right - guardX), y: top, tangentX: 1, tangentY: 0 },
+          { x: clamp(target.x, left + guardX, right - guardX), y: bottom, tangentX: 1, tangentY: 0 },
+          { x: left, y: clamp(target.y, top + guardY, bottom - guardY), tangentX: 0, tangentY: 1 },
+          { x: right, y: clamp(target.y, top + guardY, bottom - guardY), tangentX: 0, tangentY: 1 }
+        ];
+
+        const base = candidates.reduce((best, candidate) => {
+          const dx = candidate.x - target.x;
+          const dy = candidate.y - target.y;
+          const distance = dx * dx + dy * dy;
+          return !best || distance < best.distance ? { ...candidate, distance } : best;
+        }, null);
+
+        const halfWidth = clamp(stageWidth * 0.0012, 0.8, 2.2);
+        const x1 = base.x - base.tangentX * halfWidth;
+        const y1 = base.y - base.tangentY * halfWidth;
+        const x2 = base.x + base.tangentX * halfWidth;
+        const y2 = base.y + base.tangentY * halfWidth;
+
+        path.setAttribute("d", `M ${x1} ${y1} L ${target.x} ${target.y} L ${x2} ${y2} Z`);
+        path.setAttribute("stroke-width", clamp(stageWidth * 0.00045, 0.65, 1.0));
+      }
+
+      function queueTailLayout() {
+        window.cancelAnimationFrame(tailFrame);
+        tailFrame = window.requestAnimationFrame(layoutTail);
+      }
+
+      const tailObserver = typeof ResizeObserver === "function"
+        ? new ResizeObserver(queueTailLayout)
+        : null;
+
+      function attachTail(bubble, mouth) {
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        const path = document.createElementNS(svgNS, "path");
+
+        svg.classList.add("bubble-tail");
+        svg.setAttribute("preserveAspectRatio", "none");
+        svg.setAttribute("aria-hidden", "true");
+
+        path.setAttribute("fill", "#fffdf4");
+        path.setAttribute("stroke", "#0b0d12");
+        path.setAttribute("stroke-linejoin", "round");
+        path.setAttribute("vector-effect", "non-scaling-stroke");
+        svg.appendChild(path);
+
+        bubbleHost.prepend(svg);
+        activeTail = { bubble, svg, path, mouth };
+        tailObserver?.observe(stage);
+        tailObserver?.observe(bubble);
+        queueTailLayout();
+      }
+
+      scenes.forEach((scene) => {
+        const preload = new Image();
+        preload.src = scene.image;
+      });
+
+      function setBubble(step) {
+        tailObserver?.disconnect();
+        window.cancelAnimationFrame(tailFrame);
+        activeTail = null;
+        bubbleHost.replaceChildren();
+        titleCard.classList.remove("visible", "has-subtitle");
+        titleCard.setAttribute("aria-hidden", "true");
+
+        if (step.type === "title" || step.type === "subtitle") {
+          finalTitle.textContent = "THE DUDE MADE IT.";
+          finalSubtitle.textContent = "More or less.";
+          titleCard.classList.add("visible");
+          if (step.type === "subtitle") titleCard.classList.add("has-subtitle");
+          titleCard.setAttribute("aria-hidden", "false");
+          return;
+        }
+
+        const bubble = document.createElement("div");
+
+        if (step.type === "sfx") {
+          bubble.className = "bubble sfx";
+          bubble.textContent = step.text;
+          bubbleHost.appendChild(bubble);
+        } else {
+          bubble.className = "bubble";
+          bubble.style.setProperty("--x", `${step.pos.x}%`);
+          bubble.style.setProperty("--y", `${step.pos.y}%`);
+          bubble.style.setProperty("--w", `${step.pos.w}%`);
+
+          const text = document.createElement("p");
+          text.textContent = step.text;
+          bubble.appendChild(text);
+          bubbleHost.appendChild(bubble);
+          attachTail(bubble, step.pos.mouth);
+        }
+      }
+
+      function render() {
+        window.clearTimeout(autoTimer);
+        const item = timeline[cursor];
+        const isNewScene = item.sceneIndex !== lastSceneIndex;
+
+        if (isNewScene) {
+          stage.classList.add("scene-changing");
+          imageError.classList.remove("visible");
+          image.alt = item.scene.alt;
+          image.src = item.scene.image;
+          lastSceneIndex = item.sceneIndex;
+        }
+
+        setBubble(item.step);
+        sceneName.textContent = item.scene.title;
+        counter.textContent = `Scene ${item.sceneIndex + 1}/${scenes.length} · Line ${item.stepIndex + 1}/${item.scene.steps.length}`;
+        progressText.textContent = `${cursor + 1} of ${timeline.length}`;
+        progressFill.style.width = `${((cursor + 1) / timeline.length) * 100}%`;
+        backButton.disabled = cursor === 0;
+        nextButton.textContent = cursor === timeline.length - 1 ? "Restart ↻" : "Next →";
+
+        autoButton.textContent = autoPlay ? "Auto: on" : "Auto: off";
+        autoButton.classList.toggle("auto-on", autoPlay);
+        autoButton.setAttribute("aria-pressed", String(autoPlay));
+
+        const spoken = item.step.speaker ? `${item.step.speaker}: ${item.step.text}` : item.step.text;
+        announcer.textContent = `${item.scene.title}. ${spoken}`;
+
+        if (cursor === timeline.length - 1 && !completionSent) {
+          completionSent = true;
+          window.dispatchEvent(new CustomEvent("jetsetoutrocomplete", {
+            detail: { scene: item.scene.id, step: item.stepIndex }
+          }));
+        }
+
+        scheduleAuto();
+      }
+
+      image.addEventListener("load", () => {
+        stage.classList.remove("scene-changing");
+        imageError.classList.remove("visible");
+      });
+
+      image.addEventListener("error", () => {
+        stage.classList.remove("scene-changing");
+        errorFile.textContent = image.getAttribute("src") || "Unknown file";
+        imageError.classList.add("visible");
+      });
+
+      function scheduleAuto() {
+        window.clearTimeout(autoTimer);
+        if (!autoPlay || document.hidden || cursor >= timeline.length - 1) return;
+        autoTimer = window.setTimeout(() => move(1), timeline[cursor].step.duration || DEFAULT_DURATION);
+      }
+
+      function move(amount) {
+        const target = Math.max(0, Math.min(timeline.length - 1, cursor + amount));
+        if (target === cursor) {
+          scheduleAuto();
+          return;
+        }
+        cursor = target;
+        render();
+      }
+
+      function restart() {
+        completionSent = false;
+        cursor = 0;
+        render();
+      }
+
+      function next(explicitRestart = false) {
+        if (cursor === timeline.length - 1) {
+          if (explicitRestart) restart();
+          return;
+        }
+        move(1);
+      }
+
+      function setAuto(value) {
+        autoPlay = Boolean(value);
+        render();
+      }
+
+      function toggleFullscreen() {
+        const root = document.documentElement;
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          const request = root.requestFullscreen || root.webkitRequestFullscreen;
+          if (request) request.call(root)?.catch?.(() => {});
+        } else {
+          const exit = document.exitFullscreen || document.webkitExitFullscreen;
+          if (exit) exit.call(document)?.catch?.(() => {});
+        }
+      }
+
+      function updateFullscreenLabel() {
+        const active = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+        fullscreenButton.textContent = active ? "Exit full screen" : "Fullscreen";
+      }
+
+      document.getElementById('theEnd').addEventListener('click', () => {
+        cursor = timeline.length - 1;
+        render();
+      });
+      for (const event of ['pointerdown', 'keydown']) addEventListener(event, () => parent.LATE_HOST.wake());
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) window.clearTimeout(autoTimer);
+        else scheduleAuto();
+      });
+
+      document.addEventListener("fullscreenchange", updateFullscreenLabel);
+      document.addEventListener("webkitfullscreenchange", updateFullscreenLabel);
+      window.addEventListener("resize", queueTailLayout);
+
+      if (!document.documentElement.requestFullscreen && !document.documentElement.webkitRequestFullscreen) {
+        fullscreenButton.hidden = true;
+      }
+
+      window.JetSetOutro = Object.freeze({
+        next: () => next(false),
+        previous: () => move(-1),
+        restart,
+        play: () => setAuto(true),
+        pause: () => setAuto(false),
+        getState: () => ({
+          scene: timeline[cursor].scene.id,
+          sceneIndex: timeline[cursor].sceneIndex,
+          stepIndex: timeline[cursor].stepIndex,
+          timelineIndex: cursor,
+          autoPlay
+        })
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
